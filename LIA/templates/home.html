@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="profile-icon">
+            <a href="{% url 'profile' %}">
+                {% if user.profile_picture and user.profile_picture.url != "/media/profile_pics/default.jpg" %}
+                    <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" class="profile-pic-small">
+                {% else %}
+                    <div class="profile-placeholder-small" id="profile-placeholder-small">
+                        {{ user.username.0|upper }}
+                    </div>
+                {% endif %}
+            </a>
+        </div>
+    </nav>

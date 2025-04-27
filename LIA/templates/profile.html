@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="file-input" class="profile-pic-label">
+                {% if user.profile_picture and user.profile_picture.url != "/media/profile_pics/default.jpg" %}
+                    <!-- Mostrar imagen de perfil si el usuario tiene una -->
+                    <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" class="profile-pic">
+                {% else %}
+                    <!-- Si no hay imagen de perfil, mostrar un círculo con la inicial -->
+                    <div class="profile-placeholder" id="profile-placeholder">
+                        {{ user.username.0|upper }}
+                    </div>
+                {% endif %}
+                <div class="overlay">Editar</div>
+            </label>
+            <input type="file" id="file-input" name="profile_picture" class="file-input" onchange="this.form.submit()">
+
+            <div class="username-edit">
+                <label for="username">Nombre de usuario:</label>
+                {{ user_form.username }}
+            </div>
+
+            <button type="submit">Guardar cambios</button>
+        </form>
+    </div>
+    <a href="{% url 'home' %}" class="link">Home</a>
+   
+   
+   
+   
+   
+   
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var placeholder = document.getElementById("profile-placeholder");
+            if (placeholder) {
+                var colors = ["#FF5733", "#33FF57", "#3357FF", "#F39C12", "#8E44AD"];
+                var randomColor = colors[Math.floor(Math.random() * colors.length)];
+                placeholder.style.backgroundColor = randomColor;
+            }
+        });
+    </script>
+</body>
+</html>
