@@ -16,17 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import register_view
+from users.views import login_view
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 
 urlpatterns = [
-   path('admin/', admin.site.urls),
-    path('', register_view, name='register'),
+    path('admin/', admin.site.urls),
+    # Forzar la URL de inicio de sesión a la vista de inicio de sesión personalizada
+    path('', login_view, name='login'),
     path('users/', include('users.urls')),
-    # path('chat/', include('chat.urls'))
+    path('chat/', include('chat.urls')),
 ] 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

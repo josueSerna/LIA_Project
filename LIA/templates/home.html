@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>LIA</title>
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
+    <!-- Perfil -->
     <nav class="navbar">
         <div class="profile-icon">
             <a href="{% url 'profile' %}">
@@ -21,3 +22,77 @@
             </a>
         </div>
     </nav>
+
+    <div class="main-container">
+
+        <!-- Panel lateral -->
+        <aside class="sidebar">
+            <img src="{% static 'images/logo-lia-historial.png' %}" alt="Logo LIA" class="logo">
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="new_chat" class="new-chat-btn">🖊 Nuevo chat</button>
+            </form>
+
+            <h3 class="sidebar-title">Historial</h3>
+
+            {% for group, convos in grouped_conversations.items %}
+                <div class="history-group">
+                    <h5 class="group-title">{{ group }}</h5>
+                    <ul class="history-list">
+                        {% for convo in convos %}
+                            <a href="?conversation_id={{ convo.id }}" class="chat-item-link {% if convo.id == selected_conversation.id %}active{% endif %}">
+                                <li class="chat-item">
+                                    <span class="chat-summary">{{ convo.summary|default:"(Sin título)" }}</span>
+                                    <div class="chat-options-wrapper">
+                                        <button class="options-btn" onclick="event.preventDefault(); toggleMenu('menu-{{ convo.id }}')">⋯</button>
+                                        <div id="menu-{{ convo.id }}" class="dropdown-menu">
+                                            <button onclick="event.preventDefault(); renameConversation('{{ convo.id }}')">📝 Renombrar</button>
+                                            <button onclick="event.preventDefault(); deleteConversation('{{ convo.id }}')">🗑 Eliminar</button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% empty %}
+                <p class="no-history">No tienes conversaciones aún.</p>
+            {% endfor %}
+        </aside>
+
+        <!-- Zona de conversación -->
+        <section class="chat-window">
+            {% if not selected_conversation %}
+                <div class="chat-header">
+                    <img src="{% static 'images/logo-lia-chat.png' %}" alt="LIA Bot" class="bot-icon">
+                    <h1 class="chat-title">HOLA SOY LIA, ¿EN QUÉ PUEDO AYUDARTE?</h1>
+                </div>
+            {% endif %}
+            
+            {% if selected_conversation %}
+                <div class="messages">
+                    {% for msg in messages %}
+                        <div class="message user">{{ msg.text }}</div>
+                    {% empty %}
+                        <p>No hay mensajes en esta conversación.</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="post" class="message-form">
+                {% csrf_token %}
+                {% if selected_conversation %}
+                    <input type="hidden" name="conversation_id" value="{{ selected_conversation.id }}">
+                {% endif %}
+                <textarea name="message" placeholder="¿Qué quieres preguntarle a LIA?" rows="1" oninput="autoResize(this)" required></textarea>
+                    <button type="submit" class="send-btn">➤</button>
+            </form>
+
+            <p class="footer-note">LIA puede cometer errores. Considera verificar la información importante</p>
+        </section>
+    </div>
+
+    <script src="{% static 'js/crud.js' %}"></script>
+    <script src="{% static 'js/csrf.js' %}"></script>
+    <script src="{% static 'js/menu.js' %}"></script>
