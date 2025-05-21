@@ -73,9 +73,7 @@
             {% if selected_conversation %}
                 <div class="messages">
                     {% for msg in messages %}
-                        <div class="message user">{{ msg.text }}</div>
-                    {% empty %}
-                        <p>No hay mensajes en esta conversación.</p>
+                        <div class="message {% if msg.role == 'user' %}user{% else %}bot{% endif %}">{{ msg.text }}</div>
                     {% endfor %}
                 </div>
             {% endif %}
