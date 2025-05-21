@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from .models import Conversation, Message
 from collections import defaultdict
 from django.utils import timezone 
+from .ollama_client import ask_ollama
+from django.template.loader import render_to_string
 import json
 import re # Importa el módulo re para expresiones regulares
 
@@ -22,9 +24,11 @@ def extract_summary(text):
 @login_required
 def home(request):
     # Obtiene todas las conversaciones del usuario, ordenadas por fecha (más reciente primero)
-    conversations = Conversation.objects.filter(user=request.user).order_by('-updated_at')
+    user = request.user # Obtiene el usuario autenticado
+    conversations = Conversation.objects.filter(user=user).order_by('-updated_at')
     selected_conversation = None # Para almacenar la conversación activa si hay
     messages = [] # Lista de mensajes de la conversación activa (si existe)
+    
 
     # Agrupar conversaciones por rango de fechas
     now = timezone.localdate()
@@ -50,21 +54,31 @@ def home(request):
 
     # Cuando se envía un mensaje nuevo desde el formulario
     if request.method == 'POST':
-        user_input = request.POST.get('message')
+        user_input = request.POST.get('message', '').strip()
         conversation_id = request.POST.get('conversation_id')
 
         # Si el usuario envía un mensaje
         if user_input:
             if conversation_id:
                 # Continuar una conversación existente (ya tiene ID)
-                selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
+                selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=user)
             else:
                 # Crear una nueva conversación con resumen del primer mensaje
                 summary = extract_summary(user_input)
-                selected_conversation = Conversation.objects.create(user=request.user, summary=summary)
+                selected_conversation = Conversation.objects.create(user=user, summary=summary)
     
-            # Guardar el mensaje en la conversación
-            Message.objects.create(conversation=selected_conversation, text=user_input)
+            # Guardar el mensaje del usuario
+            Message.objects.create(conversation=selected_conversation, text=user_input, role='user')
+
+            # Obtener respuesta de LIA
+            try:
+                response = ask_ollama(user_input)
+            except Exception:
+                response = "Hubo un error al contactar con LIA."
+
+            # Guardar respuesta del modelo
+            Message.objects.create(conversation=selected_conversation, text=response, role='bot')
+            # Actualizar fecha de modificación
             selected_conversation.save()
 
             messages = selected_conversation.messages.order_by('created_at')
@@ -72,10 +86,11 @@ def home(request):
             # Redirigir al home con esa conversación activa
             return redirect(f'/chat/?conversation_id={selected_conversation.id}')
 
+    # Si se selecciona una conversación existente desde el menú
     elif 'conversation_id' in request.GET:
         # Cargar una conversación existente
         conversation_id = request.GET.get('conversation_id')
-        selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
+        selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=user)
         messages = selected_conversation.messages.order_by('created_at')
 
     # Si no hay conversación seleccionada, se muestra la lista de conversaciones

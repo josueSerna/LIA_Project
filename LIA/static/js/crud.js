@@ -1,4 +1,4 @@
-// Renombra una conversación usando prompt() y fetch
+// Esta función debe estar en el scope global
 function renameConversation(convoId) {
     const newTitle = prompt("Nuevo nombre para la conversación:");
     if (newTitle) {
@@ -17,7 +17,6 @@ function renameConversation(convoId) {
     }
 }
 
-// Elimina una conversación y redirige si era la activa
 function deleteConversation(convoId) {
     if (confirm("¿Estás seguro de que quieres eliminar esta conversación?")) {
         fetch(`/chat/delete/${convoId}/`, {
@@ -29,8 +28,6 @@ function deleteConversation(convoId) {
             if (response.ok) {
                 const currentUrl = new URL(window.location.href);
                 const selectedId = currentUrl.searchParams.get("conversation_id");
-
-                // Si se elimina la conversación activa, redirige al home sin ID
                 if (selectedId === convoId.toString()) {
                     window.location.href = "/chat/";
                 } else {
@@ -41,30 +38,22 @@ function deleteConversation(convoId) {
     }
 }
 
-// funcion para autoajustar el tamaño de un textarea
-function autoResize(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = (textarea.scrollHeight) + 'px';
-}
-
-
-// Enviar con Enter, Shift+Enter para salto de línea
+// Esto sí puede ir dentro del DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     const textarea = document.querySelector('textarea[name="message"]');
     const form = document.querySelector('.message-form');
 
-     // Enviar con Enter
+    if (textarea && form) {
         textarea.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 form.submit();
             }
         });
+    }
 
-        // Scroll al fondo al cargar
-        const messageContainer = document.querySelector('.messages');
-        if (messageContainer) {
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        }
+    const messageContainer = document.querySelector('.messages');
+    if (messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
 });
-
