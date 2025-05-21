@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
+
+body {
+  background-color: #031227;
+  font-family: "Kelly Slab", sans-serif;
+  color: #fff;
+  margin: 40px auto;
+  max-width: 800px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: rgba(14, 251, 175, 0.1); /* verde agua transparente */
+  border: 2px solid #0EFBAF;
+  border-radius: 12px;
+  padding: 30px 40px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 0 15px #0EFBAF44;
+}
+
+h1 {
+  color: #0EFBAF;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h2 {
+  color: #0EFBAF;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+p, li {
+  margin-bottom: 15px;
+  line-height: 1.5;
+  color: #e0e0e0;
+}
+
+ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.btn-accept {
+  display: block;
+  padding: 10px 20px;
+  background-color: #00cc88;
+  color: white;
+  width: 50%;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin: 30px auto 0;
+}
+
+.btn-accept:hover {
+  background-color: #009f6b;
+}
+
+.email {
+  text-decoration: underline;
+  color: #00cc88;
+}
+
+/* 📱 Responsive para pantallas pequeñas */
+@media (max-width: 600px) {
+  .btn-accept {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  body {
+    padding: 0 10px;
+    margin: 20px auto;
+  }
+}
