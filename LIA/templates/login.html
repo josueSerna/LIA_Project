@@ -9,7 +9,6 @@
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
 </head>
 <body class?"background">
-    <img src="{% static 'images/lia_logo.png' %}" alt="Logo" class="logo">
     <div class='container'>
         <h2>INICIA SESION</h2>
 
@@ -43,6 +42,7 @@
         
                 <button type="submit" class='btn-init'>Iniciar Sesión</button>
                 <p class="register-link">¿Ya tienes cuenta? <a href="{% url 'register' %}" class="link">Registrate</a></p>
+                <p class="register-link"><a href="{% url 'terms' %}" class="link">Terminos y condiciones</a></p>
             </form>
     </div>
    
