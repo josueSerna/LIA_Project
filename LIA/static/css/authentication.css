@@ -12,14 +12,6 @@ body {
     position: relative;
 }
 
-.logo {
-    width: 200px; 
-    position: absolute;
-    top: -5%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .container {
     background: rgba(255, 255, 255, 0.1);
     padding: 30px;
@@ -28,9 +20,10 @@ body {
     text-align: center;
     width: 30%;
     position: relative;
-    top: 40px;
+    /* top: 40px; */  /* Eliminado según petición */
 }
 
+/* Inputs y botones no los modificamos, sólo aseguramos que no se desborden */
 
 h2 {
     color: white;
@@ -45,18 +38,14 @@ input {
     border-radius: 5px;
     border: solid #27759D 2px;
     font-size: 16px;
-   
 }
 
-
-
-
-input::placeholder{
+input::placeholder {
     font-family: "Kelly Slab", sans-serif;
     color: #27759D;
 }
 
-.btn-init{
+.btn-init {
     background: #00ffbb;
     border: none;
     padding: 10px 15px;
@@ -82,14 +71,13 @@ a:hover {
     text-decoration: underline;
 }
 
-.login-link{
+.login-link {
     color: white;
 }
 
 .register-link {
     color: white;
 }
-
 
 .error-message {
     color: red;
@@ -102,17 +90,17 @@ a:hover {
     display: flex;
     align-items: center;
     width: 65%;
-    margin: 10px auto; /* Centra horizontalmente */
+    margin: 10px auto;
 }
 
 .password-container input {
     flex: 1;
-    padding-right: 40px; 
+    padding-right: 40px;
     border-radius: 5px;
     border: solid #27759D 2px;
     font-size: 16px;
     padding: 10px;
-    width: 100%; 
+    width: 100%;
 }
 
 .password-container .show-password {
@@ -126,7 +114,35 @@ a:hover {
 }
 
 .password-icon {
-    width: 35px;  
+    width: 35px;
     height: 35px;
 }
 
+/* MEDIA QUERIES PARA RESPONSIVE */
+
+@media (max-width: 1024px) {
+    .container {
+        width: 45%;
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 60%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+    input, .password-container {
+        width: 75% !important; 
+    }
+    input {
+        width: 70% !important;
+    }
+}
