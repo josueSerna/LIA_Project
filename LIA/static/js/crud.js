@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                form.submit();
+                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
             }
         });
     }

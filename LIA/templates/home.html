@@ -33,7 +33,7 @@
         <aside class="sidebar mobile-hidden" id="sidebar">
             <img src="{% static 'images/logo-lia-historial.png' %}" alt="Logo LIA" class="logo" />
 
-            <form method="post">
+            <form method="get" action="{% url 'new_chat' %}">
                 {% csrf_token %}
                 <button type="submit" name="new_chat" class="new-chat-btn">🖊 Nuevo chat</button>
             </form>
@@ -74,23 +74,20 @@
                 </div>
             {% endif %}
 
-            {% if selected_conversation %}
-                <div class="messages">
+            <div class="messages">
+                {% if selected_conversation %}
                     {% for msg in messages %}
-                        <div class="message {% if msg.role == 'user' %}user{% else %}bot{% endif %}">
-                            {{ msg.text }}
-                        </div>
+                        <div class="message {% if msg.role == 'user' %}user{% else %}bot{% endif %}">{{ msg.text }}</div>
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
 
-            <form method="post" class="message-form">
+            <form class="message-form">
                 {% csrf_token %}
                 {% if selected_conversation %}
                     <input type="hidden" name="conversation_id" value="{{ selected_conversation.id }}" />
                 {% endif %}
                 <textarea name="message" placeholder="¿Qué quieres preguntarle a LIA?" rows="1" oninput="autoResize(this)" required></textarea>
-                <!-- Usamos el icono de FontAwesome para el botón -->
                 <button type="submit" class="send-btn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -116,5 +113,6 @@
     <script src="{% static 'js/csrf.js' %}"></script>
     <script src="{% static 'js/menu.js' %}"></script>
     <script src="{% static 'js/color.js' %}"></script>
+    <script src="{% static 'js/chat.js' %}"></script>
 </body>
 </html>

@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import StreamingHttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import Conversation, Message
-from collections import defaultdict
+from .ollama_client import ask_ollama_stream ,ask_ollama 
 from django.utils import timezone 
-from .ollama_client import ask_ollama
+from collections import defaultdict
 from django.template.loader import render_to_string
-import json
-import re # Importa el módulo re para expresiones regulares
+from bs4 import BeautifulSoup
+import json, re
 
 
 # Utilidad para extraer resumen del primer mensaje
@@ -87,13 +88,27 @@ def home(request):
             return redirect(f'/chat/?conversation_id={selected_conversation.id}')
 
     # Si se selecciona una conversación existente desde el menú
-    elif 'conversation_id' in request.GET:
+    if 'conversation_id' in request.GET:
         # Cargar una conversación existente
         conversation_id = request.GET.get('conversation_id')
         selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=user)
         messages = selected_conversation.messages.order_by('created_at')
 
     # Si no hay conversación seleccionada, se muestra la lista de conversaciones
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Renderiza solo el sidebar usando el mismo template
+        html = render_to_string('home.html', {
+            'grouped_conversations': dict(grouped_conversations),
+            'selected_conversation': selected_conversation,
+            'messages': messages, 
+            'request': request, 
+        }, request=request)
+        # Extrae solo el sidebar usando BeautifulSoup
+        soup = BeautifulSoup(html, 'html.parser')
+        sidebar_html = str(soup.find(id="sidebar"))
+        return JsonResponse({'html': sidebar_html})
+
+    # Render normal para peticiones normales
     return render(request, 'home.html', {
         'grouped_conversations': dict(grouped_conversations),
         'selected_conversation': selected_conversation,
@@ -119,3 +134,63 @@ def delete_conversation(request, conversation_id):
         conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
         conversation.delete()
         return JsonResponse({"status": "ok"})
+
+@login_required
+def new_chat(request):
+    return redirect('/chat/')
+    
+
+@csrf_exempt
+@login_required
+def save_user_message(request):
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        user_input = data.get("message", "").strip()
+        convo_id = data.get("conversation_id")
+    except Exception:
+        return JsonResponse({"error": "Solicitud inválida"}, status=400)
+    if not user_input:
+        return JsonResponse({"error": "Mensaje vacío"}, status=400)
+    # Cargar o crear la conversación
+    if convo_id:
+        conversation = Conversation.objects.get(id=convo_id)
+    else:
+        summary = user_input[:40] + "..." if len(user_input) > 40 else user_input
+        conversation = Conversation.objects.create(user=request.user, summary=summary)
+    # Guardar el mensaje del usuario
+    message = Message.objects.create(conversation=conversation, text=user_input, role='user')
+    conversation.save()
+    return JsonResponse({
+        "status": "ok",
+        "message": {
+            "id": message.id,
+            "text": message.text,
+            "role": message.role,
+            "conversation_id": conversation.id
+        }
+    })
+
+@csrf_exempt
+@login_required
+def stream_bot_response(request):
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        convo_id = data.get("conversation_id")
+        user_input = data.get("message", "").strip()
+    except Exception:
+        return JsonResponse({"error": "Solicitud inválida"}, status=400)
+    if not convo_id or not user_input:
+        return JsonResponse({"error": "Datos incompletos"}, status=400)
+    conversation = Conversation.objects.get(id=convo_id)
+    def stream():
+        bot_message = ''
+        for chunk in ask_ollama_stream(user_input):
+            bot_message += chunk
+            yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+        Message.objects.create(conversation=conversation, text=bot_message.strip(), role='bot')
+    return StreamingHttpResponse(stream(), content_type='text/event-stream')
+

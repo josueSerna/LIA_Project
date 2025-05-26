@@ -275,10 +275,20 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 10px;
     padding: 10px 15px;
+    margin-bottom: 1px;
+    max-width: 60%;
+}
+
+/* Mensajes de LIA (bot) */
+.message.bot {
+    align-self: flex-start;
+    background-color: rgba(217, 217, 217, 0.12);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 10px 15px;
     margin-bottom: 10px;
-    max-width: 60vw;
-    word-wrap: break-word;
-    white-space: normal;
+    max-width: 60%;
 }
 
 

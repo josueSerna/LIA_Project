@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-  background: rgba(14, 251, 175, 0.1); /* verde agua transparente */
+  background: rgba(14, 251, 175, 0.1); /* Fondo semitransparente */
   border: 2px solid #0EFBAF;
   border-radius: 12px;
   padding: 30px 40px;
