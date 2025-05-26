@@ -58,3 +58,7 @@ def profile(request):
         pic_form = ProfilePictureForm(instance=request.user)
 
     return render(request, 'profile.html', {'user_form': user_form, 'pic_form': pic_form})
+
+
+def terms_and_conditions(request):
+    return render(request, 'termsAndConditions.html')

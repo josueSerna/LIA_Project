@@ -238,6 +238,7 @@ body {
 }
 
 .message {
+    display: inline-block; /* Hace que el ancho y alto se ajusten al contenido */
     word-break: break-word;
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -247,10 +248,28 @@ body {
     border-radius: 10px;
     max-width: 60%;
     animation: fadeInUp 0.3s ease forwards;
+    height: auto; /* aseguramos altura automática */
+    max-height: none; /* sin límite de altura */
 }
+
 /* Mensaje del usuario (alineado a la derecha con color distinto) */
+/* Mensajes del usuario */
 .message.user {
     align-self: flex-end;
+    display: inline-block;
+    background-color: rgba(217, 217, 217, 0.12);
+    color: #0EFBAF;
+    border: 1px solid #0EFBAF;
+    border-radius: 10px;
+    padding: 10px 15px;
+    /* max-width: 60vw; */
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.message.bot {
+    align-self: flex-start;
+    /* display: inline-block; */
     background-color: rgba(217, 217, 217, 0.12);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.8);
@@ -273,6 +292,7 @@ body {
 }
 
 
+
 /* Formulario de mensajes */
 .message-form {
     display: flex;
@@ -282,6 +302,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 0 10px;
+    width: 100%;   
+    box-sizing: border-box;
+    max-height: 50px;  
+    overflow: hidden;  
 }
 
 /* Estilos comunes para input y textarea */
@@ -293,7 +317,14 @@ body {
     outline: none;
     color: white;
     font-size: 1rem;
+    margin-top: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 55px;     
+    overflow-y: auto;
+    resize: none;      /* No permitir redimensionar */
 }
+
 
 /* Solo para textarea (autoexpansión) */
 .message-form textarea {
@@ -301,7 +332,7 @@ body {
     overflow: hidden;
     min-height: 35px;
     max-height: 150px;
-    padding: 8px 0;
+    padding: 15px 0;
     line-height: 1.4;
     word-break: break-word;
 }
@@ -323,6 +354,7 @@ body {
     transition: background-color 0.2s ease;
 }
 
+
 .send-btn:active {
     background-color: #0ccf8f;
 }
@@ -334,4 +366,58 @@ body {
     font-size: 0.8rem;
     margin-top: 10px;
     color: #aaa;
+}
+
+/* Menú hamburguesa */
+.hamburger-btn {
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Mostrar solo en pantallas pequeñas */
+@media screen and (max-width: 992px) {
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        bottom: 0;
+        width: 300px;
+        background-color: #020D1D;
+        transition: left 0.3s ease;
+        z-index: 15;
+    }
+
+    .sidebar.show-sidebar {
+        left: 0;
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    .main-container {
+        flex-direction: column;
+    }
+
+    .chat-window {
+        padding: 80px 20px 30px 20px;
+    }
+}
+
+@media screen and (max-width: 388px) {
+  .message-form textarea {
+    font-size: 13px; 
+  }
+  .message-form textarea {
+    padding: 12px 0;
+  
+}
 }
