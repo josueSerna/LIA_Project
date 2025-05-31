@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Conversation, Message
-from .ollama_client import ask_ollama_stream ,ask_ollama 
+from .ollama_client import ask_ollama, ask_ollama_stream
 from django.utils import timezone 
 from collections import defaultdict
 from django.template.loader import render_to_string

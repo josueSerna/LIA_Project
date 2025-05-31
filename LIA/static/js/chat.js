@@ -73,11 +73,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // Recargar la barra lateral para actualizar el historial
         reloadSidebar();
 
-        // 2. Mostrar mensaje vacío del bot y hacer streaming de la respuesta
+        // 2. Mostrar mensaje vacío del bot y la animación de "pensando"
         const botMsg = document.createElement('div');
         botMsg.className = 'message bot';
         messagesContainer.appendChild(botMsg);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Inicia la animación de "pensando"
+        const thinkingInterval = startThinkingAnimation(botMsg);
 
         // 3. Iniciar streaming de la respuesta de la IA
         const streamResponse = await fetch("/chat/stream_bot_response/", {
@@ -95,6 +98,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const reader = streamResponse.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+
+        // Cuando empiece a llegar datos, detén la animación
+        clearInterval(thinkingInterval);
+        botMsg.textContent = "";  // Limpia el mensaje y reemplázalo con la respuesta
+
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -125,6 +133,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 sidebar.outerHTML = data.html;
             }
         });
+    }
+
+    // Agrega esta función para la animación de "pensando"
+    function startThinkingAnimation(element) {
+        let dots = 0;
+        const interval = setInterval(() => {
+            dots = (dots % 3) + 1;
+            element.textContent = 'Pensando' + '.'.repeat(dots);
+        }, 500);
+        return interval;
     }
 });
 
