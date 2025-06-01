@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Conversation, Message
-from .ollama_client import ask_ollama_stream ,ask_ollama 
+from .ollama_client import ask_ollama_stream
 from django.utils import timezone 
 from collections import defaultdict
 from django.template.loader import render_to_string
@@ -25,7 +25,7 @@ def extract_summary(text):
 @login_required
 def home(request):
     # Obtiene todas las conversaciones del usuario, ordenadas por fecha (más reciente primero)
-    user = request.user # Obtiene el usuario autenticado
+    user = request.user  # Usuario autenticado
     conversations = Conversation.objects.filter(user=user).order_by('-updated_at')
     selected_conversation = None # Para almacenar la conversación activa si hay
     messages = [] # Lista de mensajes de la conversación activa (si existe)
@@ -33,8 +33,7 @@ def home(request):
 
     # Agrupar conversaciones por rango de fechas
     now = timezone.localdate()
-    grouped_conversations = defaultdict(list)  # Usar defaultdict para agrupar por fecha
-
+    grouped_conversations = defaultdict(list)
     for convo in conversations:
         delta_days = (now - convo.updated_at.date()).days
 
@@ -71,15 +70,12 @@ def home(request):
             # Guardar el mensaje del usuario
             Message.objects.create(conversation=selected_conversation, text=user_input, role='user')
 
-            # Obtener respuesta de LIA
-            try:
-                response = ask_ollama(user_input)
-            except Exception:
-                response = "Hubo un error al contactar con LIA."
+            # NOTA: Se elimina la obtención sincrónica de respuesta. es decir, no se espera a que el bot responda inmediatamente.
+            # En su lugar, se inicia el streaming de la respuesta del bot.
+            # Esto permite que la interfaz se mantenga responsiva y el usuario pueda ver la conversación en tiempo real.
+            # El streaming de la respuesta se realizará mediante la función stream_bot_response.
 
-            # Guardar respuesta del modelo
-            Message.objects.create(conversation=selected_conversation, text=response, role='bot')
-            # Actualizar fecha de modificación
+            # Actualizar fecha de modificación y redirigir al home con esa conversación activa
             selected_conversation.save()
 
             messages = selected_conversation.messages.order_by('created_at')
@@ -94,21 +90,18 @@ def home(request):
         selected_conversation = get_object_or_404(Conversation, id=conversation_id, user=user)
         messages = selected_conversation.messages.order_by('created_at')
 
-    # Si no hay conversación seleccionada, se muestra la lista de conversaciones
+    # Petición AJAX para recargar el sidebar
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        # Renderiza solo el sidebar usando el mismo template
         html = render_to_string('home.html', {
             'grouped_conversations': dict(grouped_conversations),
             'selected_conversation': selected_conversation,
             'messages': messages, 
             'request': request, 
         }, request=request)
-        # Extrae solo el sidebar usando BeautifulSoup
         soup = BeautifulSoup(html, 'html.parser')
         sidebar_html = str(soup.find(id="sidebar"))
         return JsonResponse({'html': sidebar_html})
 
-    # Render normal para peticiones normales
     return render(request, 'home.html', {
         'grouped_conversations': dict(grouped_conversations),
         'selected_conversation': selected_conversation,
@@ -191,6 +184,7 @@ def stream_bot_response(request):
         for chunk in ask_ollama_stream(user_input):
             bot_message += chunk
             yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+        # Una vez completado el stream, se guarda la respuesta completa
         Message.objects.create(conversation=conversation, text=bot_message.strip(), role='bot')
     return StreamingHttpResponse(stream(), content_type='text/event-stream')
 
