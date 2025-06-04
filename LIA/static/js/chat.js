@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 conversationIdInput = document.createElement('input');
                 conversationIdInput.type = 'hidden';
                 conversationIdInput.name = 'conversation_id';
+                form.appendChild(conversationIdInput);
             }
             conversationIdInput.value = data.message.conversation_id;
             conversationId = data.message.conversation_id;
@@ -46,19 +47,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Actualiza el historial por AJAX usando la misma vista
             const newUrl = window.location.pathname + '?conversation_id=' + data.message.conversation_id;
-            fetch(newUrl, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(resp => resp.json())
-            .then(data => {
-                const sidebar = document.getElementById('sidebar');
-                if (sidebar) {
-                    sidebar.outerHTML = data.html;
-                }
-            });
+            fetch(newUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(resp => resp.json())
+                .then(data => {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        sidebar.outerHTML = data.html;
+                    }
+                });
         }
         
-
         // Mostrar mensaje del usuario en la interfaz
         const userMsg = document.createElement('div');
         userMsg.className = 'message user';
@@ -98,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const reader = streamResponse.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        let fullMessage = "";
 
         // Cuando empiece a llegar datos, detén la animación
         clearInterval(thinkingInterval);
@@ -112,14 +111,21 @@ document.addEventListener("DOMContentLoaded", function () {
             for (const part of parts) {
                 if (part.startsWith("data: ")) {
                     const chunkData = JSON.parse(part.slice(6));
-                    botMsg.textContent += chunkData.chunk;
+                    fullMessage += chunkData.chunk;
+                    // Se usa innerHTML para que se interprete el HTML generado por formatMessage
+                    botMsg.innerHTML = formatMessage(fullMessage);
                     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+                // Llama a Prism para resaltar el código dentro del mensaje del bot
+                if (window.Prism) {
+                    Prism.highlightAllUnder(botMsg);
                 }
             }
         }
         return false;
     });
 
+    // Función para recargar el sidebar tras enviar mensaje
     function reloadSidebar() {
         fetch(window.location.pathname, {
             headers: {
@@ -143,6 +149,46 @@ document.addEventListener("DOMContentLoaded", function () {
             element.textContent = 'Pensando' + '.'.repeat(dots);
         }, 500);
         return interval;
+    }
+
+    // Función para escapar caracteres HTML peligrosos.
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+    
+    // Función para "desescapar" HTML (convierte entidades en caracteres originales)
+    function unescapeHtml(text) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        return textarea.value;
+    }
+
+    // Función para formatear el mensaje y reemplazar bloques de código delimitados
+    // por triple backticks por un contenedor con estilo y resaltado de sintaxis
+    function formatMessage(text) {
+        // Regex para detectar bloques de código: ```lenguaje\n ... \n```
+        const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
+        return text.replace(codeRegex, (match, lang, code) => {
+            const languageClass = lang ? `language-${lang}` : '';
+            return `<div class="code-block"><pre><code class="${languageClass}">${escapeHtml(code)}</code></pre></div>`;
+        });
+    }
+
+    // Al cargar la página, formatea los mensajes del bot ya renderizados
+    // Desescapa el HTML y luego aplica el formateo para los bloques de código.
+    document.querySelectorAll('.message.bot').forEach(function(msg) {
+        msg.innerHTML = formatMessage(unescapeHtml(msg.innerHTML));
+    });
+    // Llama a Prism para resaltar el código
+    if (window.Prism) {
+        Prism.highlightAll();
     }
 });
 
