@@ -21,6 +21,7 @@ class Message(models.Model):
         (BOT, 'LIA'),
     ]
 
+    # Cada mensaje pertenece a una conversación específica
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     text = models.TextField()
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER)

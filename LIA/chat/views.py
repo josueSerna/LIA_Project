@@ -135,6 +135,7 @@ def new_chat(request):
 
 @csrf_exempt
 @login_required
+# Función para guardar el mensaje del usuario y crear una conversación si no existe
 def save_user_message(request):
     if request.method != 'POST':
         return JsonResponse({"error": "Método no permitido"}, status=405)
@@ -167,6 +168,7 @@ def save_user_message(request):
 
 @csrf_exempt
 @login_required
+# Función para manejar el streaming de la respuesta del bot y guardar los mensajes en la base de datos
 def stream_bot_response(request):
     if request.method != 'POST':
         return JsonResponse({"error": "Método no permitido"}, status=405)

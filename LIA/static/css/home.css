@@ -421,3 +421,17 @@ body {
   
 }
 }
+.code-block {
+    background-color: #2d2d2d; 
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-family: Menlo, Consolas, "Liberation Mono", Courier, monospace;
+    color: #f8f8f2; 
+}
+
+.code-block pre {
+    margin: 0;
+    overflow-x: auto;
+}
