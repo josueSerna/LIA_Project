@@ -45,16 +45,17 @@ function applyHomeColorPalette() {
 function changeButtonColor() {
     let color;
     const checkbox = document.getElementById("checkbox");
+    const isHome = window.location.pathname.includes('home');
 
     if (checkbox.checked) {
-        if (window.location.pathname.includes('home')) {
+        if (isHome) {
             color = '#AFC1D9'; // Color alternativo para home
             applyHomeColorPalette();
         } else {
             color = 'linear-gradient(to bottom right, #27759D 5%, #A9C5EE 50%, #974D98 100%)'; // Alternativo para otros
         }
     } else {
-        if (window.location.pathname.includes('home')) {
+        if (isHome) {
             color = '#031227'; // Color original para home
             resetHomeColorPalette();
         } else {

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm
 from .models import User
 
 class LoginForm(AuthenticationForm):
@@ -15,18 +15,26 @@ class RegisterForm(UserCreationForm):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirmación de contraseña'}))
     
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+    label="",
+    widget=forms.EmailInput(attrs={
+        "placeholder": "Digita tu correo electrónico",
+        "class": "input-field"
+    })
+    )
+class Meta:
+    model = User
+    fields = ['username', 'email', 'password1', 'password2']
         
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Este correo ya está registrado.")
-        return email
+def clean_email(self):
+    email = self.cleaned_data["email"]
+    if User.objects.filter(email=email).exists():
+        raise forms.ValidationError("Este correo ya está registrado.")
+    return email
 
-    def clean_username(self):
-        return self.cleaned_data["username"]
+def clean_username(self):
+    return self.cleaned_data["username"]
     
 class ProfilePictureForm(forms.ModelForm):
     class Meta:
