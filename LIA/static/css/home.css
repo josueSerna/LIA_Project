@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
 
+/* GLOBAL */
 body {
     font-family: "Kelly Slab", sans-serif;
     margin: 0;
@@ -7,7 +8,7 @@ body {
     color: #fff;
 }
 
-/*  NAVBAR (perfil arriba derecha)  */
+/* NAVBAR  */
 .navbar {
     position: absolute;
     top: 15px;
@@ -34,14 +35,14 @@ body {
     text-transform: uppercase;
 }
 
-/*  CONTENEDOR PRINCIPAL  */
+/* MAIN CONTAINER */
 .main-container {
     display: flex;
     height: 100vh;
     overflow: hidden;
 }
 
-/*  SIDEBAR / HISTORIAL  */
+/* SIDEBAR  */
 .sidebar {
     width: 300px;
     background-color: #020D1D;
@@ -50,21 +51,21 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* For Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .sidebar::-webkit-scrollbar {
-    width: 8px; 
+    width: 8px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2); 
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
 .sidebar::-webkit-scrollbar-track {
-    background: transparent; 
+    background: transparent;
 }
 
 .logo {
@@ -85,7 +86,6 @@ body {
     font-weight: bold;
     margin-bottom: 20px;
     transition: background-color 0.2s;
-    
 }
 
 .new-chat-btn:hover {
@@ -142,7 +142,6 @@ body {
     white-space: nowrap;
 }
 
-/* menú ⋯ */
 .chat-options-wrapper {
     position: relative;
 }
@@ -182,7 +181,7 @@ body {
     background-color: #222;
 }
 
-/*  ZONA DE CHAT  */
+/*  CHAT WINDOW  */
 .chat-window {
     flex: 1;
     padding: 30px;
@@ -207,8 +206,7 @@ body {
     margin-top: 1px;
 }
 
-/* Mensajes */
-/* Animación y container de mensajes */
+/* MESSAGES */
 .messages {
     margin-top: 40px;
     flex: 1;
@@ -218,12 +216,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    scrollbar-width: none; 
-    -ms-overflow-style: none;  
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     scroll-padding-bottom: 30%;
 }
+
 .messages::-webkit-scrollbar {
-    display: none; 
+    display: none;
 }
 
 @keyframes fadeInUp {
@@ -238,7 +237,7 @@ body {
 }
 
 .message {
-    display: inline-block; /* Hace que el ancho y alto se ajusten al contenido */
+    display: inline-block;
     word-break: break-word;
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -248,38 +247,20 @@ body {
     border-radius: 10px;
     max-width: 60%;
     animation: fadeInUp 0.3s ease forwards;
-    height: auto; /* aseguramos altura automática */
-    max-height: none; /* sin límite de altura */
+    height: auto;
+    max-height: none;
 }
 
-/* Mensaje del usuario (alineado a la derecha con color distinto) */
-/* Mensajes del usuario */
 .message.user {
     align-self: flex-end;
-    display: inline-block;
     background-color: rgba(217, 217, 217, 0.12);
     color: #0EFBAF;
     border: 1px solid #0EFBAF;
-    border-radius: 10px;
     padding: 10px 15px;
-    /* max-width: 60vw; */
     word-wrap: break-word;
     white-space: normal;
 }
 
-.message.bot {
-    align-self: flex-start;
-    /* display: inline-block; */
-    background-color: rgba(217, 217, 217, 0.12);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 10px;
-    padding: 10px 15px;
-    margin-bottom: 1px;
-    max-width: 60%;
-}
-
-/* Mensajes de LIA (bot) */
 .message.bot {
     align-self: flex-start;
     background-color: rgba(217, 217, 217, 0.12);
@@ -291,9 +272,7 @@ body {
     max-width: 60%;
 }
 
-
-
-/* Formulario de mensajes */
+/*  MESSAGE FORM */
 .message-form {
     display: flex;
     align-items: center;
@@ -302,13 +281,12 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 0 10px;
-    width: 100%;   
+    width: 100%;
     box-sizing: border-box;
-    max-height: 50px;  
-    overflow: hidden;  
+    max-height: 50px;
+    overflow: hidden;
 }
 
-/* Estilos comunes para input y textarea */
 .message-form input[type="text"],
 .message-form textarea {
     flex: 1;
@@ -320,16 +298,12 @@ body {
     margin-top: 0;
     max-width: 100%;
     box-sizing: border-box;
-    height: 55px;     
+    height: 55px;
     overflow-y: auto;
-    resize: none;      /* No permitir redimensionar */
+    resize: none;
 }
 
-
-/* Solo para textarea (autoexpansión) */
 .message-form textarea {
-    resize: none;
-    overflow: hidden;
     min-height: 35px;
     max-height: 150px;
     padding: 15px 0;
@@ -337,8 +311,7 @@ body {
     word-break: break-word;
 }
 
-
-/* Botón de enviar */
+/*  SEND BUTTON  */
 .send-btn {
     background-color: #0EFBAF;
     border: none;
@@ -354,13 +327,11 @@ body {
     transition: background-color 0.2s ease;
 }
 
-
 .send-btn:active {
     background-color: #0ccf8f;
 }
 
-
-/* Pie de página */
+/*  FOOTER  */
 .footer-note {
     text-align: center;
     font-size: 0.8rem;
@@ -368,7 +339,7 @@ body {
     color: #aaa;
 }
 
-/* Menú hamburguesa */
+/*  HAMBURGER MENU  */
 .hamburger-btn {
     display: none;
     position: absolute;
@@ -382,7 +353,49 @@ body {
     cursor: pointer;
 }
 
-/* Mostrar solo en pantallas pequeñas */
+/*  CODE BLOCKS  */
+.code-block {
+    position: relative;
+    background-color: #2d2d2d;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    color: #f8f8f2;
+    overflow-x: auto;
+}
+
+.code-block pre {
+    margin: 0;
+    overflow-x: auto;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #e6f4ea;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: #d0edd8;
+    transform: scale(1.03);
+}
+
+.code-block:hover .copy-btn {
+    opacity: 1;
+}
+
+/*  RESPONSIVE  */
 @media screen and (max-width: 992px) {
     .sidebar {
         position: fixed;
@@ -413,25 +426,8 @@ body {
 }
 
 @media screen and (max-width: 388px) {
-  .message-form textarea {
-    font-size: 13px; 
-  }
-  .message-form textarea {
-    padding: 12px 0;
-  
-}
-}
-.code-block {
-    background-color: #2d2d2d; 
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    font-family: Menlo, Consolas, "Liberation Mono", Courier, monospace;
-    color: #f8f8f2; 
-}
-
-.code-block pre {
-    margin: 0;
-    overflow-x: auto;
+    .message-form textarea {
+        font-size: 13px;
+        padding: 12px 0;
+    }
 }
