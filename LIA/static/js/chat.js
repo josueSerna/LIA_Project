@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const textarea = form.querySelector('textarea[name="message"]');
     const messagesContainer = document.querySelector('.messages');
     let conversationIdInput = form.querySelector('input[name="conversation_id"]');
+    window.copyCode = copyCode;
 
     if (!form || !textarea || !messagesContainer) return;
 
@@ -173,12 +174,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Función para formatear el mensaje y reemplazar bloques de código delimitados
     // por triple backticks por un contenedor con estilo y resaltado de sintaxis
     function formatMessage(text) {
-        // Regex para detectar bloques de código: ```lenguaje\n ... \n```
-        const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
-        return text.replace(codeRegex, (match, lang, code) => {
-            const languageClass = lang ? `language-${lang}` : '';
-            return `<div class="code-block"><pre><code class="${languageClass}">${escapeHtml(code)}</code></pre></div>`;
-        });
+    // Regex para detectar bloques de código: ```lenguaje\n ... \n```
+    const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
+    return text.replace(codeRegex, (match, lang, code) => {
+        const languageClass = lang ? `language-${lang}` : '';
+        return `<div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                    <pre><code class="${languageClass}">${escapeHtml(code)}</code></pre>
+                </div>`;
+    });
     }
 
     // Al cargar la página, formatea los mensajes del bot ya renderizados
@@ -190,5 +194,27 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.Prism) {
         Prism.highlightAll();
     }
+
+    // Función para copiar el código al portapapeles
+    function copyCode(btn) {
+        // Busca el elemento <code> dentro del contenedor .code-block
+        const codeBlock = btn.parentNode;
+        const codeElement = codeBlock.querySelector("pre code");
+        const textToCopy = codeElement.innerText || codeElement.textContent;
+        
+        // Usa la API del portapapeles, requiere HTTPS o localhost
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                btn.textContent = "Copiado!";
+                setTimeout(() => {
+                    btn.textContent = "Copiar";
+                }, 2000);
+            })
+            .catch(err => {
+                console.error("Error al copiar el código:", err);
+                btn.textContent = "Error";
+            });
+    }
+
 });
 
