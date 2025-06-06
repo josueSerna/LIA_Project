@@ -283,7 +283,7 @@ body {
     padding: 0 10px;
     width: 100%;
     box-sizing: border-box;
-    max-height: 50px;
+    max-height: 30%;
     overflow: hidden;
 }
 
@@ -299,7 +299,7 @@ body {
     max-width: 100%;
     box-sizing: border-box;
     height: 55px;
-    overflow-y: auto;
+    overflow-y: hidden;
     resize: none;
 }
 
