@@ -50,8 +50,6 @@ def home(request):
 
         grouped_conversations[group].append(convo)
 
-
-
     # Cuando se envía un mensaje nuevo desde el formulario
     if request.method == 'POST':
         user_input = request.POST.get('message', '').strip()
@@ -70,7 +68,7 @@ def home(request):
             # Guardar el mensaje del usuario
             Message.objects.create(conversation=selected_conversation, text=user_input, role='user')
 
-            # NOTA: Se elimina la obtención sincrónica de respuesta. es decir, no se espera a que el bot responda inmediatamente.
+            # NOTA: Se elimina la obtención sincrónica de respuesta.
             # En su lugar, se inicia el streaming de la respuesta del bot.
             # Esto permite que la interfaz se mantenga responsiva y el usuario pueda ver la conversación en tiempo real.
             # El streaming de la respuesta se realizará mediante la función stream_bot_response.
@@ -182,8 +180,13 @@ def stream_bot_response(request):
         return JsonResponse({"error": "Datos incompletos"}, status=400)
     conversation = Conversation.objects.get(id=convo_id)
     def stream():
+        # Construir el historial de conversación con todos los mensajes ordenados por fecha
+        history = "\n".join(f"{msg.role.capitalize()}: {msg.text}" for msg in conversation.messages.order_by('created_at'))
         bot_message = ''
-        for chunk in ask_ollama_stream(user_input):
+        # Obtener el nombre del usuario (se ajusta según tu modelo de perfil)
+        user_name = request.user.first_name or request.user.username
+        # Llamada a ask_ollama_stream pasando el historial y el nombre del usuario
+        for chunk in ask_ollama_stream(user_input, history, user_name):
             bot_message += chunk
             yield f"data: {json.dumps({'chunk': chunk})}\n\n"
         # Una vez completado el stream, se guarda la respuesta completa
