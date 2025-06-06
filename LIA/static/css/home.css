@@ -258,7 +258,7 @@ body {
     border: 1px solid #0EFBAF;
     padding: 10px 15px;
     word-wrap: break-word;
-    white-space: normal;
+    white-space: pre-wrap;
 }
 
 .message.bot {
