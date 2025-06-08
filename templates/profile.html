@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Perfil</title>
+    <link rel='stylesheet' type="text/css" href='{% static "css/profile.css" %}'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="profile-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Campo para cambiar la foto de perfil -->
+            <label for="file-input" class="profile-pic-label">
+                {% if user.profile_picture and user.profile_picture.url != "/media/profile_pics/default.jpg" %}
+                    <img src="{{ user.profile_picture.url }}" alt="Foto de perfil" class="profile-pic">
+                {% else %}
+                    <div class="profile-placeholder">
+                        {{ user.username.0|upper }}
+                    </div>
+                {% endif %}
+                <div class="overlay">Editar</div>
+            </label>
+            <input type="file" id="file-input" name="profile_picture" class="file-input" onchange="this.form.submit()">
+            
+            <!-- Campo para cambiar el nombre de usuario -->
+            <div class="user-info">
+                <label for="username">Nombre de usuario:</label>
+                <div class="info-display">
+                    <input type="text" name="username" id="username" value="{{ user.username }}" class="username-input" readonly>
+                    <i class="fas fa-pencil-alt edit-icon" onclick="enableEdit('username')"></i>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <label for="email">Correo electrónico:</label>
+                <div class="info-display">
+                    <input type="text" name="email" id="email" value="{{ user.email }}" class="email-input" readonly>
+                </div>
+            </div>
+
+
+            <!-- Botón de cambio de color -->
+            <div class="container">
+                <h2>Cambiar color</h2>
+                <label class="ui-switch">
+                  <input type="checkbox" id="checkbox" onclick="changeButtonColor()">
+                  <span class="slider">
+                    <span class="circle"></span>
+                  </span>
+                </label>
+              </div>
+              
+              
+
+            <div class="logo-profile">
+                <img src="{% static 'images/logo-lia-chat.png' %}" alt="">
+            </div>
+
+
+            <button type="submit" id="save-btn" class="button" style="display: none;">Guardar</button>
+
+
+        </form>
+    </div>
+    <a href="{% url 'home' %}" class="back-icon">
+        <img src="{% static 'images/flecha-izquierda.png' %}" alt="Volver">
+    </a>
+
+    <div class="logout-section">
+        <a href="{% url 'login' %}" class="logout-button">
+            <i class="fas fa-door-open"></i> Cerrar sesión
+        </a>
+    </div>
+    
+    <script src="{% static 'js/color.js' %}"></script>
+    
+
+
+
+    <script>
+        // Evita que la página se muestre desde el caché cuando el usuario presiona "atrás"
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            window.location.href = "/login/";
+        }
+    
+        // También previene la caché de forma general
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.href = "/login/";
+            }
+        };
+    </script>
+    
+    
+    
+    <script>
+
+        function enableEdit(fieldId) {
+        const input = document.getElementById(fieldId);
+        const saveBtn = document.getElementById('save-btn');
+
+        input.removeAttribute('readonly');
+        input.focus();
+        saveBtn.style.display = 'inline-block';
+
+        // Si el usuario empieza a escribir, mantener visible el botón
+        input.addEventListener('input', () => {
+            saveBtn.style.display = 'inline-block';
+        });
+    }
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var placeholder = document.getElementById("profile-placeholder");
+            if (placeholder) {
+                var colors = ["#FF5733", "#33FF57", "#3357FF", "#F39C12", "#8E44AD"];
+                var randomColor = colors[Math.floor(Math.random() * colors.length)];
+                placeholder.style.backgroundColor = randomColor;
+            }
+        });
+    </script>
+</body>
+</html>
