@@ -1,14 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
 
+/* Variables CSS */
+:root {
+    --color-bg-general: #031227;
+    --color-bg-sidebar: #020D1D;
+    --color-chat-input-bg: rgba(217, 217, 217, 0.06);
+    --color-texto: #fff;
+    --sidebar-text: #fff;
+    --borde-chat-input: rgba(255, 255, 255, 0.08);
+    --color-sidebar-item: rgba(217, 217, 217, 0.06);
+    --color-sidebar-item-hover: rgba(217, 217, 217, 0.1);
+    --color-sidebar-item-active: rgba(217, 217, 217, 0.12);
+    --color-mensaje-user: rgba(217, 217, 217, 0.12);
+    --color-mensaje-bot: rgba(217, 217, 217, 0.12);
+    --borde-mensaje-bot: rgba(255, 255, 255, 0.8);
+    --history-chat: rgba(217, 217, 217, 0.06);
+    --new-chat-btn-bg: rgba(217, 217, 217, 0.06);
+    --new-chat-btn-border: rgba(255, 255, 255, 0.08);
+    --new-chat-btn-hover: rgba(217, 217, 217, 0.12);
+    --send-btn-bg: #0EFBAF;
+    --send-btn-active: #0ccf8f;
+    --user-message-color: #0EFBAF;
+    --user-message-border: #0EFBAF;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --footer-note: #19283E;
+    --send-icon: #fff;
+}
+
 /* GLOBAL */
 body {
     font-family: "Kelly Slab", sans-serif;
     margin: 0;
-    background-color: #031227;
-    color: #fff;
+    background-color: var(--color-bg-general);
+    color: var(--color-texto);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* NAVBAR  */
+/* NAVBAR */
 .navbar {
     position: absolute;
     top: 15px;
@@ -42,17 +70,18 @@ body {
     overflow: hidden;
 }
 
-/* SIDEBAR  */
+/* SIDEBAR */
 .sidebar {
     width: 300px;
-    background-color: #020D1D;
+    background-color: var(--color-bg-sidebar);
+    color: var(--sidebar-text);
     padding: 20px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -60,7 +89,7 @@ body {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--scrollbar-thumb);
     border-radius: 4px;
 }
 
@@ -75,9 +104,9 @@ body {
 
 .new-chat-btn {
     font-family: "Kelly Slab", sans-serif;
-    background-color: rgba(217, 217, 217, 0.06);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--new-chat-btn-bg);
+    color: var(--sidebar-text);
+    border: 1px solid var(--new-chat-btn-border);
     padding: 20px;
     font-size: 20px;
     border-radius: 10px;
@@ -89,18 +118,19 @@ body {
 }
 
 .new-chat-btn:hover {
-    background-color: rgba(217, 217, 217, 0.12);
+    background-color: var(--new-chat-btn-hover);
 }
 
 .sidebar-title {
     font-size: 1.2rem;
     margin-bottom: 10px;
+    color: var(--sidebar-text);
 }
 
 .group-title {
     font-size: 15px;
     margin: 15px 0 5px;
-    color: #f2f2f2;
+    color: var(--sidebar-text);
 }
 
 .history-list {
@@ -111,28 +141,29 @@ body {
 
 .chat-item-link {
     text-decoration: none;
-    color: white;
+    color: var(--sidebar-text);
     display: block;
     margin-bottom: 5px;
 }
 
 .chat-item {
-    background-color: rgba(217, 217, 217, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--history-chat);
+    border: 1px solid var(--new-chat-btn-border);
     padding: 10px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.2s;
 }
 
 .chat-item-link.active .chat-item {
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    background-color: rgba(217, 217, 217, 0.12);
+    border: 1px solid var(--borde-mensaje-bot);
+    background-color: var(--color-sidebar-item-active);
 }
 
 .chat-item:hover {
-    background-color: rgba(217, 217, 217, 0.1);
+    background-color: var(--color-sidebar-item-hover);
 }
 
 .chat-summary {
@@ -149,7 +180,7 @@ body {
 .options-btn {
     background: none;
     border: none;
-    color: white;
+    color: var(--sidebar-text);
     font-size: 18px;
     cursor: pointer;
 }
@@ -159,8 +190,8 @@ body {
     position: absolute;
     right: 0;
     top: 25px;
-    background-color: #111;
-    border: 1px solid #444;
+    background-color: var(--color-bg-sidebar);
+    border: 1px solid var(--borde-chat-input);
     border-radius: 6px;
     min-width: 120px;
     z-index: 100;
@@ -172,16 +203,16 @@ body {
     padding: 8px 12px;
     background: none;
     border: none;
-    color: white;
+    color: var(--sidebar-text);
     text-align: left;
     cursor: pointer;
 }
 
 .dropdown-menu button:hover {
-    background-color: #222;
+    background-color: var(--color-sidebar-item-hover);
 }
 
-/*  CHAT WINDOW  */
+/* CHAT WINDOW */
 .chat-window {
     flex: 1;
     padding: 30px;
@@ -202,7 +233,7 @@ body {
 
 .chat-title {
     font-size: 1.6rem;
-    color: white;
+    color: var(--color-texto);
     margin-top: 1px;
 }
 
@@ -241,8 +272,8 @@ body {
     word-break: break-word;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    color: white;
+    border: 1px solid var(--borde-mensaje-bot);
+    color: var(--color-texto);
     padding: 12px;
     border-radius: 10px;
     max-width: 60%;
@@ -253,9 +284,9 @@ body {
 
 .message.user {
     align-self: flex-end;
-    background-color: rgba(217, 217, 217, 0.12);
-    color: #0EFBAF;
-    border: 1px solid #0EFBAF;
+    background-color: var(--color-mensaje-user);
+    color: var(--user-message-color);
+    border: 1px solid var(--user-message-border);
     padding: 10px 15px;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -263,22 +294,22 @@ body {
 
 .message.bot {
     align-self: flex-start;
-    background-color: rgba(217, 217, 217, 0.12);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background-color: var(--color-mensaje-bot);
+    color: var(--color-texto);
+    border: 1px solid var(--borde-mensaje-bot);
     border-radius: 10px;
     padding: 10px 15px;
     margin-bottom: 10px;
     max-width: 60%;
 }
 
-/*  MESSAGE FORM */
+/* MESSAGE FORM */
 .message-form {
     display: flex;
     align-items: center;
     gap: 10px;
-    background-color: rgba(217, 217, 217, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--color-chat-input-bg);
+    border: 1px solid var(--borde-chat-input);
     border-radius: 20px;
     padding: 0 10px;
     width: 100%;
@@ -293,7 +324,7 @@ body {
     background: transparent;
     border: none;
     outline: none;
-    color: white;
+    color: var(--color-texto);
     font-size: 1rem;
     margin-top: 0;
     max-width: 100%;
@@ -311,9 +342,9 @@ body {
     word-break: break-word;
 }
 
-/*  SEND BUTTON  */
+/* SEND BUTTON */
 .send-btn {
-    background-color: #0EFBAF;
+    background-color: var(--send-btn-bg);
     border: none;
     border-radius: 50%;
     padding: 10px;
@@ -328,18 +359,22 @@ body {
 }
 
 .send-btn:active {
-    background-color: #0ccf8f;
+    background-color: var(--send-btn-active);
 }
 
-/*  FOOTER  */
+#icon-send{
+    color: var(--send-icon);
+}
+
+/* FOOTER */
 .footer-note {
     text-align: center;
     font-size: 0.8rem;
     margin-top: 10px;
-    color: #aaa;
+    color: var(--footer-note);
 }
 
-/*  HAMBURGER MENU  */
+/* HAMBURGER MENU */
 .hamburger-btn {
     display: none;
     position: absolute;
@@ -349,11 +384,11 @@ body {
     background: none;
     border: none;
     font-size: 28px;
-    color: white;
+    color: var(--color-texto);
     cursor: pointer;
 }
 
-/*  CODE BLOCKS  */
+/* CODE BLOCKS */
 .code-block {
     position: relative;
     background-color: #2d2d2d;
@@ -395,7 +430,7 @@ body {
     opacity: 1;
 }
 
-/*  RESPONSIVE  */
+/* RESPONSIVE */
 @media screen and (max-width: 992px) {
     .sidebar {
         position: fixed;
@@ -403,7 +438,7 @@ body {
         top: 0;
         bottom: 0;
         width: 300px;
-        background-color: #020D1D;
+        background-color: var(--color-bg-sidebar);
         transition: left 0.3s ease;
         z-index: 15;
     }
