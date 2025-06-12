@@ -17,3 +17,6 @@ __pycache__/
 
 # Archivos de subida de usuarios
 media/
+
+# Archivos estáticos generados
+staticfiles/
