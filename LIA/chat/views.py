@@ -3,12 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Conversation, Message
-from .ollama_client import ask_ollama_stream
+from .ollama_client import ask_ollama_stream, ask_llava_stream
 from django.utils import timezone 
 from collections import defaultdict
 from django.template.loader import render_to_string
 from bs4 import BeautifulSoup
 import json, re
+import base64
+from PIL import Image
+import io
 
 
 # Utilidad para extraer resumen del primer mensaje
@@ -152,7 +155,16 @@ def save_user_message(request):
         summary = user_input[:40] + "..." if len(user_input) > 40 else user_input
         conversation = Conversation.objects.create(user=request.user, summary=summary)
     # Guardar el mensaje del usuario
-    message = Message.objects.create(conversation=conversation, text=user_input, role='user')
+    image_b64 = data.get("image")
+    if image_b64 and image_b64.startswith('data:'):
+        image_b64 = image_b64.split(';base64,')[1]
+    # Luego guarda image_b64 en el campo image
+    message = Message.objects.create(
+        conversation=conversation,
+        text=user_input,
+        role='user',
+        image=image_b64 if image_b64 else None
+    )
     conversation.save()
     return JsonResponse({
         "status": "ok",
@@ -174,22 +186,40 @@ def stream_bot_response(request):
         data = json.loads(request.body)
         convo_id = data.get("conversation_id")
         user_input = data.get("message", "").strip()
+        image_b64 = data.get("image", None)
     except Exception:
         return JsonResponse({"error": "Solicitud inválida"}, status=400)
     if not convo_id or not user_input:
         return JsonResponse({"error": "Datos incompletos"}, status=400)
+    # Validar imagen si existe
+    if image_b64:
+        try:
+            if image_b64.startswith('data:'):
+                header, image_b64 = image_b64.split(';base64,')
+            img_bytes = base64.b64decode(image_b64)
+            img = Image.open(io.BytesIO(img_bytes))
+            if img.format not in ['PNG', 'JPEG']:
+                return JsonResponse({"error": "Solo PNG o JPG permitidos."}, status=400)
+            if (img.format == 'PNG' and (img.width > 1024 or img.height > 1024 or len(img_bytes) > 1.5 * 1024 * 1024)) or \
+               (img.format == 'JPEG' and (img.width > 672 or img.height > 672 or len(img_bytes) > 500 * 1024)):
+                return JsonResponse({"error": "Límites: PNG hasta 1024x1024 y 1.5MB, JPG hasta 672x672 y 500KB."}, status=400)
+        except Exception:
+            return JsonResponse({"error": "Imagen inválida."}, status=400)
+
     conversation = Conversation.objects.get(id=convo_id)
     def stream():
-        # Construir el historial de conversación con todos los mensajes ordenados por fecha
         history = "\n".join(f"{msg.role.capitalize()}: {msg.text}" for msg in conversation.messages.order_by('created_at'))
         bot_message = ''
-        # Obtener el nombre del usuario (se ajusta según tu modelo de perfil)
         user_name = request.user.first_name or request.user.username
-        # Llamada a ask_ollama_stream pasando el historial y el nombre del usuario
-        for chunk in ask_ollama_stream(user_input, history, user_name):
-            bot_message += chunk
-            yield f"data: {json.dumps({'chunk': chunk})}\n\n"
-        # Una vez completado el stream, se guarda la respuesta completa
+        # Llama a LLaVA si hay imagen
+        if image_b64:
+            for chunk in ask_llava_stream(user_input, image_b64):
+                bot_message += chunk
+                yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+        else:
+            for chunk in ask_ollama_stream(user_input, history, user_name):
+                bot_message += chunk
+                yield f"data: {json.dumps({'chunk': chunk})}\n\n"
         Message.objects.create(conversation=conversation, text=bot_message.strip(), role='bot')
     return StreamingHttpResponse(stream(), content_type='text/event-stream')
 

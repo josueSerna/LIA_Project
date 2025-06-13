@@ -45,3 +45,40 @@ LIA:"""
                         yield chunk
                 except Exception:
                     continue
+
+def ask_llava_stream(prompt, image_b64, history="", user_name=""):
+    """
+    Envía el prompt y la imagen a LLaVA usando Ollama y retorna la respuesta en streaming.
+    LIA siempre responde en español.
+    """
+    full_prompt = f"""
+Eres LIA, una IA especializada en analizar imágenes.
+Siempre responde en español, de forma clara y útil.
+Recuerda que estás hablando con {user_name}.
+
+### Historial de Conversación:
+{history}
+
+### Imagen + Pregunta del Usuario:
+{prompt}
+
+LIA:"""
+
+    payload = {
+        "model": "llava",
+        "prompt": full_prompt,
+        "images": [image_b64],
+        "stream": True
+    }
+
+    with requests.post(OLLAMA_API_URL, json=payload, stream=True) as response:
+        response.raise_for_status()
+        for line in response.iter_lines(decode_unicode=True):
+            if line:
+                try:
+                    data = json.loads(line)
+                    chunk = data.get("response", "")
+                    if chunk:
+                        yield chunk
+                except Exception:
+                    continue

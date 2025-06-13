@@ -26,6 +26,7 @@ class Message(models.Model):
     text = models.TextField()
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"[{self.role}] {self.text[:30]}"

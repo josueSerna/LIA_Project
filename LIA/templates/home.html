@@ -80,7 +80,7 @@
             <div class="messages">
                 {% if selected_conversation %}
                     {% for msg in messages %}
-                        <div class="message {% if msg.role == 'user' %}user{% else %}bot{% endif %}">{{ msg.text }}</div>
+                        <div class="message {% if msg.role == 'user' %}user{% else %}bot{% endif %}">{{ msg.text }}{% if msg.image %}<br><img src="data:image/{% if msg.image|slice:':4' == '/9j/' %}jpeg{% else %}png{% endif %};base64,{{ msg.image }}" style="max-width:200px; max-height:200px; margin-top:5px;" />{% endif %}</div>
                     {% endfor %}
                 {% endif %}
             </div>
@@ -90,6 +90,14 @@
                 {% if selected_conversation %}
                     <input type="hidden" name="conversation_id" value="{{ selected_conversation.id }}" />
                 {% endif %}
+                      
+                <!-- Botón para adjuntar imagen -->
+                <input type="file" name="image" accept="image/*" id="image-input" style="display:none" onchange="previewImage(event)">
+                <label for="image-input" class="image-upload-btn" title="Adjuntar imagen">
+                    <i class="fas fa-image"></i>
+                </label>
+                <img id="image-preview" style="max-width:100px; max-height:100px; display:none; margin-top:5px;" />
+            
                 <textarea name="message" placeholder="¿Qué quieres preguntarle a LIA?" rows="1" oninput="autoResize(this)" required></textarea>
                 <button type="submit" class="send-btn">
                     <i id='icon-send' class="fas fa-paper-plane"></i>
