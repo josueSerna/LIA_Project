@@ -31,15 +31,14 @@
             </label>
             <input type="file" id="file-input" name="profile_picture" class="file-input" onchange="this.form.submit()">
             
-            <!-- Campo para cambiar el nombre de usuario -->
             <div class="user-info">
-                <label for="username">Nombre de usuario:</label>
+                <label for="username">Nombre de usuario:
+                    <i class="fas fa-pencil-alt edit-icon" onclick="enableEdit('username')"></i>
+                </label>
                 <div class="info-display">
                     <input type="text" name="username" id="username" value="{{ user.username }}" class="username-input" readonly>
-                    <i class="fas fa-pencil-alt edit-icon" onclick="enableEdit('username')"></i>
                 </div>
             </div>
-
             <div class="user-info">
                 <label for="email">Correo electrónico:</label>
                 <div class="info-display">
@@ -77,7 +76,7 @@
 
     <div class="logout-section">
         <a href="{% url 'login' %}" class="logout-button">
-            <i class="fas fa-door-open"></i> Cerrar sesión
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
         </a>
     </div>
     

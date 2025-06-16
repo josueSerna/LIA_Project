@@ -92,16 +92,20 @@
                 {% endif %}
                       
                 <!-- Botón para adjuntar imagen -->
-                <input type="file" name="image" accept="image/*" id="image-input" style="display:none" onchange="previewImage(event)">
+                <input type="file" name="image" accept="image/*" id="image-input" style="display:none" />
                 <label for="image-input" class="image-upload-btn" title="Adjuntar imagen">
                     <i class="fas fa-image"></i>
                 </label>
-                <img id="image-preview" style="max-width:100px; max-height:100px; display:none; margin-top:5px;" />
+                <div id="image-preview-container" style="position: relative; display: none;">
+                    <img id="image-preview" style="max-width: 100px; max-height: 100px;" />
+                    <span id="remove-image-btn" style="position: absolute; top: 0; left: 0; background: white; border-radius: 50%; width: 20px; height: 20px; text-align: center; line-height: 20px; cursor: pointer; font-weight: bold; display: none;">×</span>
+                </div>
             
                 <textarea name="message" placeholder="¿Qué quieres preguntarle a LIA?" rows="1" oninput="autoResize(this)" required></textarea>
                 <button type="submit" class="send-btn">
                     <i id='icon-send' class="fas fa-paper-plane"></i>
                 </button>
+                <button type="button"  class="send-btn" id="stop-button" style="display: none;"><i id='icon-stop' class="fas fa-square"></i></button>
             </form>
 
             <p class="footer-note">LIA puede cometer errores. Considera verificar la información importante</p>

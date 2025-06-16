@@ -25,6 +25,7 @@
     --scrollbar-thumb: rgba(255, 255, 255, 0.2);
     --footer-note: #19283E;
     --send-icon: #fff;
+    --stop-icon: #fff;
 }
 
 /* GLOBAL */
@@ -34,6 +35,8 @@ body {
     background-color: var(--color-bg-general);
     color: var(--color-texto);
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 300;
+    letter-spacing: 0.5px;
 }
 
 /* NAVBAR */
@@ -58,7 +61,6 @@ body {
     align-items: center;
     justify-content: center;
     border: 2px solid #ccc;
-    font-weight: bold;
     color: white;
     text-transform: uppercase;
 }
@@ -272,7 +274,6 @@ body {
     word-break: break-word;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    border: 1px solid var(--borde-mensaje-bot);
     color: var(--color-texto);
     padding: 12px;
     border-radius: 10px;
@@ -290,17 +291,19 @@ body {
     padding: 10px 15px;
     word-wrap: break-word;
     white-space: pre-wrap;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 .message.bot {
-    align-self: flex-start;
-    background-color: var(--color-mensaje-bot);
+    align-self: center;
+    background-color: transparent;
     color: var(--color-texto);
-    border: 1px solid var(--borde-mensaje-bot);
-    border-radius: 10px;
-    padding: 10px 15px;
+    border: none;
+    padding: 10px 0;
     margin-bottom: 10px;
-    max-width: 60%;
+    max-width: 100%;
+    line-height: 1.5;
 }
 
 /* MESSAGE FORM */
@@ -364,6 +367,10 @@ body {
 
 #icon-send{
     color: var(--send-icon);
+}
+
+#icon-stop{
+    color: var(--stop-icon);
 }
 
 /* FOOTER */

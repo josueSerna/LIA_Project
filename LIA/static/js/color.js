@@ -23,7 +23,8 @@ const colorPalettes = {
       userMessageBorder: '#0EFBAF',
       scrollbarThumb: 'rgba(255, 255, 255, 0.2)',
       footerNote: '#aaa',
-      sendIcon: '#000'
+      sendIcon: '#000',
+      stopIcon: '#000',
     },
     light: {
       background: '#AFC1D9',
@@ -49,23 +50,36 @@ const colorPalettes = {
       userMessageBorder: '#256F96',
       scrollbarThumb: 'rgba(255, 255, 255, 0.3)',
       footerNote: '#19283E',
-      sendIcon: '#fff'
+      sendIcon: '#fff',
+      stopIcon: '#fff',
     }
   },
   gradientPages: {
     dark: {
       background: 'linear-gradient(to bottom right, #27759D 5%, #031227 50%, #974D98 100%)',
-      text: '#FFFFFF'
+      text: '#000',
+      title: '#fff',
+      btns: '#00cc99',
+      otherTexts: '#00cc99',
+      profileText: '#fff' 
     },
     light: {
       background: 'linear-gradient(to bottom right, #27759D 5%, #A9C5EE 50%, #974D98 100%)',
-      text: '#FFFFFF'
+      text: '#fff',
+      title: '#000',
+      btns: '#256F96',
+      otherTexts: ' #256F96',
+      profileText: '#000' 
     }
   }
 };
 
 // Lista de páginas que deben usar gradiente
-const GRADIENT_PAGES = ['login', 'register', 'password', 'profile'];
+const GRADIENT_PAGES = [
+  'login', 'register', 'password', 'profile',
+  'password_reset', 'password_reset_done',
+  'password_reset_complete', 'password_reset_confirm'
+];
 
 // Determina el tipo de página actual
 function getPageType() {
@@ -83,43 +97,56 @@ function getPageType() {
 }
 
 // Aplica la paleta de colores correcta
-function applyColorPalette(palette) {
+function applyColorPalette(palette, pageType) {
   const root = document.documentElement;
   
   // Aplicar estilos base
   document.body.style.background = palette.background;
-  document.body.style.color = palette.text;
   
-  // Aplicar todas las variables CSS
-  const cssVars = {
-    '--color-bg-general': palette.general,
-    '--color-bg-sidebar': palette.sidebar,
-    '--color-chat-input-bg': palette.chatInputBg,
-    '--color-texto': palette.text,
-    '--sidebar-text': palette.sidebarText || palette.text,
-    '--borde-chat-input': palette.chatInputBorder,
-    '--color-sidebar-item': palette.sidebarItem,
-    '--color-sidebar-item-hover': palette.sidebarItemHover,
-    '--color-sidebar-item-active': palette.sidebarItemActive,
-    '--color-mensaje-user': palette.userMessage,
-    '--color-mensaje-bot': palette.botMessage,
-    '--borde-mensaje-bot': palette.botMessageBorder,
-    '--history-chat': palette.historyChat || palette.sidebarItem,
-    '--new-chat-btn-bg': palette.newChatBtnBg,
-    '--new-chat-btn-border': palette.newChatBtnBorder,
-    '--new-chat-btn-hover': palette.newChatBtnHover,
-    '--send-btn-bg': palette.sendBtnBg,
-    '--send-btn-active': palette.sendBtnActive,
-    '--user-message-color': palette.userMessageColor,
-    '--user-message-border': palette.userMessageBorder,
-    '--scrollbar-thumb': palette.scrollbarThumb || 'rgba(255, 255, 255, 0.2)',
-    '--footer-note': palette.footerNote,
-    '--send-icon' : palette.sendIcon,
-  };
-  
-  Object.entries(cssVars).forEach(([key, value]) => {
-    root.style.setProperty(key, value);
-  });
+  if (pageType === 'home') {
+    // Aplicar variables CSS para home
+    const cssVars = {
+      '--color-bg-general': palette.general,
+      '--color-bg-sidebar': palette.sidebar,
+      '--color-chat-input-bg': palette.chatInputBg,
+      '--color-texto': palette.text,
+      '--sidebar-text': palette.sidebarText || palette.text,
+      '--borde-chat-input': palette.chatInputBorder,
+      '--color-sidebar-item': palette.sidebarItem,
+      '--color-sidebar-item-hover': palette.sidebarItemHover,
+      '--color-sidebar-item-active': palette.sidebarItemActive,
+      '--color-mensaje-user': palette.userMessage,
+      '--color-mensaje-bot': palette.botMessage,
+      '--borde-mensaje-bot': palette.botMessageBorder,
+      '--history-chat': palette.historyChat || palette.sidebarItem,
+      '--new-chat-btn-bg': palette.newChatBtnBg,
+      '--new-chat-btn-border': palette.newChatBtnBorder,
+      '--new-chat-btn-hover': palette.newChatBtnHover,
+      '--send-btn-bg': palette.sendBtnBg,
+      '--send-btn-active': palette.sendBtnActive,
+      '--user-message-color': palette.userMessageColor,
+      '--user-message-border': palette.userMessageBorder,
+      '--scrollbar-thumb': palette.scrollbarThumb || 'rgba(255, 255, 255, 0.2)',
+      '--footer-note': palette.footerNote,
+      '--send-icon': palette.sendIcon,
+      '--stop-icon': palette.stopIcon,
+    };
+    
+    Object.entries(cssVars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+  } else {
+    // Actualizar variables CSS para gradientPages
+    root.style.setProperty('--background', palette.background);
+    root.style.setProperty('--text', palette.text);
+    root.style.setProperty('--title', palette.title);
+    root.style.setProperty('--btns', palette.btns);
+    root.style.setProperty('--otherTexts', palette.otherTexts);
+    root.style.setProperty('--profileText', palette.profileText);
+    
+    // Forzar actualización del color de texto
+    document.body.style.color = palette.text;
+  }
 }
 
 // Carga el tema guardado
@@ -157,11 +184,10 @@ function applyCurrentTheme() {
     palette = isLightMode ? colorPalettes.gradientPages.light : colorPalettes.gradientPages.dark;
   }
   
-  applyColorPalette(palette);
+  applyColorPalette(palette, pageType);
   
   // Guardar preferencias
   localStorage.setItem("theme", isLightMode ? "light" : "dark");
-  localStorage.setItem("backgroundColor", document.body.style.background);
 }
 
 // Configura los event listeners

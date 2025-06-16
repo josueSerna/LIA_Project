@@ -1,15 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
 
+:root {
+    --background: linear-gradient(to bottom right, #27759D 5%, #031227 50%, #974D98 100%);
+    --text: #fff;
+    --btns: #00cc99;
+    --otherTexts: #00cc99;
+    --title: #000
+}
+
 body {
     font-family: "Kelly Slab", sans-serif;
     letter-spacing: 1px;
-    background: linear-gradient(to bottom right, #27759D 5%, #031227 50%, #974D98 100%);
+    background: var(--background);
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0;
     position: relative;
+    /* color: var(--text) !important; */
 }
 
 .container {
@@ -20,13 +29,11 @@ body {
     text-align: center;
     width: 30%;
     position: relative;
-    /* top: 40px; */  /* Eliminado según petición */
+    color: var(--text) !important;
 }
 
-/* Inputs y botones no los modificamos, sólo aseguramos que no se desborden */
-
 h2 {
-    color: white;
+    color: var(--title) !important;
     font-size: 24px;
     margin-bottom: 20px;
 }
@@ -46,12 +53,13 @@ input::placeholder {
 }
 
 .btn-init {
-    background: #00ffbb;
+    background: var(--btns);
     border: none;
+    color: var(--text);
     padding: 10px 15px;
     font-family: "Kelly Slab", sans-serif;
     font-size: 18px;
-    color: black;
+    color: var(--text);
     border-radius: 5px;
     cursor: pointer;
     width: 50%;
@@ -59,11 +67,12 @@ input::placeholder {
 }
 
 .btn-init:hover {
-    background: #00cc99;
+    background: var(--btns);
+    opacity: 0.9;
 }
 
 a {
-    color: #00ffbb;
+    color: var(--otherTexts) !important;
     text-decoration: none;
 }
 
@@ -71,12 +80,12 @@ a:hover {
     text-decoration: underline;
 }
 
-.login-link {
-    color: white;
-}
-
+.login-link,
 .register-link {
-    color: white;
+    color: var(--title) !important;
+}
+.link{
+    color: var(--otherTexts);
 }
 
 .error-message {
@@ -118,8 +127,7 @@ a:hover {
     height: 35px;
 }
 
-/* MEDIA QUERIES PARA RESPONSIVE */
-
+/* MEDIA QUERIES */
 @media (max-width: 1024px) {
     .container {
         width: 45%;
