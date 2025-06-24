@@ -1,0 +1,51 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ pablo ]
+  pull_request:
+    branches: [ main, pablo ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: lia
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+    - name: 📥 Clonar el repo
+      uses: actions/checkout@v3
+
+    - name: 🐍 Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: 📦 Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: ⏳ Esperar MySQL
+      run: sleep 15
+
+    - name: ⚙️ Migrar base de datos
+      env:
+        DATABASE_NAME: lia
+        DATABASE_USER: root
+        DATABASE_PASSWORD: root
+        DATABASE_HOST: 127.0.0.1
+        DATABASE_PORT: 3306
+      run: |
+        python manage.py migrate
+
+    - name: ✅ Ejecutar pruebas
+      run: |
+        python manage.py test

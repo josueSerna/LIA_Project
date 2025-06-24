@@ -62,6 +62,17 @@ Recuerda que estás hablando con {user_name}.
 ### Imagen + Pregunta del Usuario:
 {prompt}
 
+### Instrucciones para LIA:
+    - Analiza la imagen proporcionada.
+    - Responde de forma detallada y precisa.
+    - Usa un lenguaje natural y profesional.
+    - Si la pregunta es sobre la imagen, asegúrate de responderla directamente.
+    - Si no puedes responder, indica que no tienes suficiente información.
+    - Si la pregunta es sobre el contenido de la imagen, describe lo que ves de manera detallada.
+    - Si la pregunta es sobre el contexto de la imagen, proporciona información relevante.
+    - Si te preguntan tu opinion sobre la imagen, ofrece una evaluación objetiva.
+Responde con una descripción completa de lo que ves en la imagen. Sé detallada, precisa y usa siempre español.
+
 LIA:"""
 
     payload = {
